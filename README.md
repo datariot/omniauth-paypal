@@ -1,14 +1,21 @@
 # OmniAuth PayPal
 
-**Note:** This gem is designed to work with the unreleased OmniAuth 1.0 library.
+**Note:** This gem is designed to work with OmniAuth 1.0 library.
 
-This gem contains the PayPal Identity strategy for OmniAuth.
+This gem contains the PayPal Access strategy for OmniAuth.
 
-## Ruby
+## info
 
-Tested with the following Ruby versions:
+PayPal Access information https://www.x.com/developers/x.commerce/products/paypal-access
 
-- MRI 1.9.2
+The info returned currently is:
+
+info['name']
+info['email']
+
+I will be adding more of the "advanced" info when I get a chance.
+
+To register your application for PayPal identity: https://www.x.com/products/access/applications/submit
 
 ## License
 

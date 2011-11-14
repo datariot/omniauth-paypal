@@ -15,6 +15,7 @@ module OmniAuth
 
       def auth_hash
         OmniAuth::Utils.deep_merge(
+        puts access_token.to_yaml
           super, {
             'uid' => @access_token.client.id
           }
@@ -24,24 +25,24 @@ module OmniAuth
       info do
         {
           'name' => raw_info['fullName'],
+          'first_name' => raw_info['firstName'],
+          'last_name' => raw_info['lastName'],
           'email' => email(raw_info),
-          'address' => address(raw_info),
-          'phone' => raw_info['telephoneNumber'],
-          'status' => raw_info['status']
+          'phone' => raw_info['telephoneNumber']
+        }
+      end
+
+      extra do
+        {
+          'emails' => raw_info['emails'],
+          'address' => raw_info['addresses'],
+          'status' => raw_info['status']  
         }
       end
 
       def email(raw_info)
         unless raw_info['emails'].empty?
           raw_info['emails'][0]
-        end
-      end
-
-      def address(raw_info)
-        unless raw_info['addresses'].nil?
-          unless raw_info['addresses'].empty?
-            raw_info['addresses'][0]
-          end
         end
       end
 

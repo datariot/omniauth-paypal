@@ -16,7 +16,7 @@ module OmniAuth
       def auth_hash
         OmniAuth::Utils.deep_merge(
           super, {
-            'uid' => @access_token.client.id
+            'uid' => email(raw_info)
           }
         )
       end
@@ -24,10 +24,18 @@ module OmniAuth
       info do
         {
           'name' => raw_info['fullName'],
+          'first_name' => raw_info['firstName'],
+          'last_name' => raw_info['lastName'],
           'email' => email(raw_info),
-          'address' => address(raw_info),
-          'phone' => raw_info['telephoneNumber'],
-          'status' => raw_info['status']
+          'phone' => raw_info['telephoneNumber']
+        }
+      end
+
+      extra do
+        {
+          'emails' => raw_info['emails'],
+          'addresses' => raw_info['addresses'],
+          'status' => raw_info['status']  
         }
       end
 
@@ -37,19 +45,11 @@ module OmniAuth
         end
       end
 
-      def address(raw_info)
-        unless raw_info['addresses'].nil?
-          unless raw_info['addresses'].empty?
-            raw_info['addresses'][0]
-          end
-        end
-      end
-
       def raw_info
         access_token.options[:mode] = :query
         access_token.options[:param_name] = :oauth_token
-        response = access_token.get('https://identity.x.com/xidentity/resources/profile/me').parsed['identity']
-        @raw_info ||= response
+        response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
+        @raw_info ||= response.parsed['identity']
       end
     end
   end

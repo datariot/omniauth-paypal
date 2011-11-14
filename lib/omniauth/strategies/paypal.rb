@@ -15,7 +15,6 @@ module OmniAuth
 
       def auth_hash
         OmniAuth::Utils.deep_merge(
-        puts access_token.to_yaml
           super, {
             'uid' => email(raw_info)
           }
@@ -36,7 +35,8 @@ module OmniAuth
         {
           'emails' => raw_info['emails'],
           'addresses' => raw_info['addresses'],
-          'status' => raw_info['status']  
+          'status' => raw_info['status'], 
+          'raw_info' => raw_info 
         }
       end
 

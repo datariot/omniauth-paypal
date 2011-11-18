@@ -50,6 +50,7 @@ module OmniAuth
         access_token.options[:param_name] = :oauth_token
         response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
         @raw_info ||= response.parsed['identity']
+        puts @raw_info
       end
     end
   end

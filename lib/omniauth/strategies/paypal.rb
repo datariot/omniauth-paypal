@@ -35,7 +35,7 @@ module OmniAuth
         {
           'emails' => raw_info['emails'],
           'addresses' => raw_info['addresses'],
-          'status' => raw_info['status'], 
+          'status' => raw_info['status'],
           'raw_info' => raw_info 
         }
       end

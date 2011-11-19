@@ -35,7 +35,8 @@ module OmniAuth
         {
           'emails' => raw_info['emails'],
           'addresses' => raw_info['addresses'],
-          'status' => raw_info['status']  
+          'status' => raw_info['status'] 
+          'raw_info' => raw_info 
         }
       end
 
@@ -50,7 +51,6 @@ module OmniAuth
         access_token.options[:param_name] = :oauth_token
         response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
         @raw_info ||= response.parsed['identity']
-        puts @raw_info
       end
     end
   end

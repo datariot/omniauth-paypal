@@ -10,10 +10,15 @@ PayPal Access information https://www.x.com/developers/x.commerce/products/paypa
 
 The info returned currently is:
 
-info['name']
-info['email']
+    info['name']
+    info['email']
+    info['first_name']
+    info['last_name]
+    info['phone']
 
-I will be adding more of the "advanced" info when I get a chance.
+    extra['emails']
+    extra['addresses']
+    extra['language']
 
 To register your application for PayPal identity: https://www.x.com/products/access/applications/submit
 

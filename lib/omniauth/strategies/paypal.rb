@@ -48,7 +48,7 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info =|| load_identity()
+        @raw_info = load_identity() unless @raw_info
       end
 
       private

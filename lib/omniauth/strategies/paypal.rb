@@ -49,6 +49,7 @@ module OmniAuth
 
       def raw_info
         @raw_info = load_identity() unless @raw_info
+        puts @raw_info
       end
 
       private

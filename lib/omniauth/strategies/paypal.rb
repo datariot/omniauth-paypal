@@ -48,11 +48,12 @@ module OmniAuth
       end
 
       def raw_info
-        access_token.options[:mode] = :query
-        access_token.options[:param_name] = :oauth_token
-        response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
-        puts response.parsed
-        @raw_info ||= response.parsed['identity']
+        unless @raw_info
+          access_token.options[:mode] = :query
+          access_token.options[:param_name] = :oauth_token
+          response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
+          @raw_info = response.parsed['identity']
+        end
       end
     end
   end

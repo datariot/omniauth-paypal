@@ -3,23 +3,17 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
+      DEFAULT_SCOPE = "https://identity.x.com/xidentity/resources/profile/me"
+
       option :client_options, {
         :site          => 'https://identity.x.com',
         :authorize_url => '/xidentity/resources/authorize',
         :token_url     => '/xidentity/oauthtokenservice'
       }
 
-      def request_phase
-        super
-      end
+      option :authorize_options, [:scope]
 
-      def auth_hash
-        OmniAuth::Utils.deep_merge(
-          super, {
-            'uid' => raw_info['userId']
-          }
-        )
-      end
+      uid { raw_info['userId'] }
     
       info do
         {
@@ -37,7 +31,8 @@ module OmniAuth
           'addresses' => raw_info['addresses'],
           'status' => raw_info['status'],
           'language' =>  raw_info['language'],
-
+          'dob' => raw_info['dob'],
+          'timezone' => raw_info['timezone']
         }
       end
 
@@ -48,8 +43,13 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info = load_identity() unless @raw_info
-        @raw_info
+        @raw_info ||= load_identity()
+      end
+
+      def authorize_params
+        super.tap do |params|
+          params[:scope] ||= DEFAULT_SCOPE
+        end
       end
 
       private

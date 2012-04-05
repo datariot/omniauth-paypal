@@ -4,7 +4,7 @@ module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
       DEFAULT_SCOPE = "https://identity.x.com/xidentity/resources/profile/me"
-      DEFAULT_MAXAUTHAGE = 10
+      DEFAULT_MAX_AUTH_AGE = 10
 
       option :client_options, {
         :site          => 'https://identity.x.com',
@@ -12,7 +12,7 @@ module OmniAuth
         :token_url     => '/xidentity/oauthtokenservice'
       }
 
-      option :authorize_options, [:scope, :MaxAuthAge]
+      option :authorize_options, [:scope, :max_auth_age]
 
       uid { raw_info['userId'] }
     
@@ -50,7 +50,8 @@ module OmniAuth
       def authorize_params
         super.tap do |params|
           params[:scope] ||= DEFAULT_SCOPE
-          params[:MaxAuthAge] ||= DEFAULT_MAXAUTHAGE
+          params[:max_auth_age] ||= DEFAULT_MAX_AUTH_AGE
+          puts params
         end
       end
 

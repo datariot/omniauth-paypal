@@ -33,13 +33,9 @@ module OmniAuth
           'status' => raw_info['status'],
           'language' =>  raw_info['language'],
           'dob' => raw_info['dob'],
-          'timezone' => raw_info['timezone']
+          'timezone' => raw_info['timezone'],
+          'payerID' => raw_info['payerID']
         }
-      end
-
-      def callback_phase
-        @code = request.params['code']
-        super
       end
 
       def email(raw_info)
@@ -64,10 +60,10 @@ module OmniAuth
           access_token.options[:mode] = :query
           access_token.options[:param_name] = :oauth_token
           access_token.options[:grant_type] = :authorization_code
-          access_token.options[:code] = @code
-  puts "Access_token Options:: #{access_token.options}"
-          response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
-          response.parsed['identity']
+          response = access_token.get('/xidentity/resources/profile/me')
+          identity = response.parsed['identity']
+          puts identity
+          identity
         end
     end
   end

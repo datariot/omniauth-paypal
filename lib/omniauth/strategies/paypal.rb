@@ -65,6 +65,7 @@ module OmniAuth
           access_token.options[:param_name] = :oauth_token
           access_token.options[:grant_type] = :authorization_code
           access_token.options[:code] = @code
+  puts "Access_token Options:: #{access_token.options}"
           response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
           response.parsed['identity']
         end

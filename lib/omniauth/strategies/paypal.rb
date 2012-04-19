@@ -4,6 +4,7 @@ module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
       DEFAULT_SCOPE = "https://identity.x.com/xidentity/resources/profile/me"
+      DEFAULT_RESPONSE_TYPE = "code"
 
       option :client_options, {
         :site          => 'https://identity.x.com',
@@ -11,7 +12,7 @@ module OmniAuth
         :token_url     => '/xidentity/oauthtokenservice'
       }
 
-      option :authorize_options, [:scope]
+      option :authorize_options, [:scope, :response_type]
 
       uid { raw_info['userId'] }
     
@@ -49,6 +50,7 @@ module OmniAuth
       def authorize_params
         super.tap do |params|
           params[:scope] ||= DEFAULT_SCOPE
+          params[:response_type] ||= DEFAULT_RESPONSE_TYPE
         end
       end
 

@@ -58,6 +58,8 @@ module OmniAuth
         def load_identity
           access_token.options[:mode] = :query
           access_token.options[:param_name] = :oauth_token
+          access_token.options[:grant_type] = :authorization_code
+          access_token.options[:code] = request.params[:code]
           response = access_token.get('https://identity.x.com/xidentity/resources/profile/me')
           response.parsed['identity']
         end

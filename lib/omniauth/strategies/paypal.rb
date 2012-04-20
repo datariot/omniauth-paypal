@@ -62,7 +62,6 @@ module OmniAuth
           access_token.options[:grant_type] = :authorization_code
           response = access_token.get('/xidentity/resources/profile/me')
           identity = response.parsed['identity']
-          puts identity
           identity
         end
     end

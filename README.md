@@ -19,6 +19,10 @@ The info returned currently is:
     extra['emails']
     extra['addresses']
     extra['language']
+    extra['status']
+    extra['dob']
+    extra['timezone']
+    extra['payerID]'
 
 To register your application for PayPal identity: https://www.x.com/products/access/applications/submit
 

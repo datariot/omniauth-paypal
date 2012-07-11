@@ -1,34 +1,37 @@
 GIT
   remote: git://github.com/intridea/omniauth-oauth2.git
-  revision: e54d91dbfa00109ddf9476a95d8f7e7783f082c6
+  revision: e82ed5d2321ae27b6d2ff88e47244f32364bde3e
   specs:
-    omniauth-oauth2 (1.0.0)
-      oauth2 (~> 0.5.0)
+    omniauth-oauth2 (1.1.0)
+      oauth2 (~> 0.8.0)
       omniauth (~> 1.0)
 
 PATH
   remote: .
   specs:
-    omniauth-paypal (0.0.4)
-      omniauth-oauth2 (~> 1.0.0)
+    omniauth-paypal (0.1.0)
+      omniauth-oauth2 (~> 1.1.0)
 
 GEM
   remote: http://rubygems.org/
   specs:
-    addressable (2.2.7)
     diff-lcs (1.1.3)
-    faraday (0.7.6)
-      addressable (~> 2.2)
+    faraday (0.8.1)
       multipart-post (~> 1.1)
-      rack (~> 1.1)
     hashie (1.2.0)
+    httpauth (0.1)
     json (1.6.6)
-    multi_json (1.2.0)
+    jwt (0.1.4)
+      json (>= 1.2.4)
+    multi_json (1.3.6)
     multipart-post (1.1.5)
-    oauth2 (0.5.2)
-      faraday (~> 0.7)
+    oauth2 (0.8.0)
+      faraday (~> 0.8)
+      httpauth (~> 0.1)
+      jwt (~> 0.1.4)
       multi_json (~> 1.0)
-    omniauth (1.0.3)
+      rack (~> 1.2)
+    omniauth (1.1.0)
       hashie (~> 1.2)
       rack
     rack (1.4.1)
@@ -47,7 +50,7 @@ PLATFORMS
 
 DEPENDENCIES
   json
-  omniauth-oauth2!
+  omniauth-oauth2 (~> 1.1.0)!
   omniauth-paypal!
   rake
   rspec (~> 2.7.0)

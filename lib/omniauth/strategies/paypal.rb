@@ -3,13 +3,13 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = "https://identity.x.com/xidentity/resources/profile/me"
+      DEFAULT_SCOPE = "profile"
       DEFAULT_RESPONSE_TYPE = "code"
 
       option :client_options, {
-        :site          => 'https://identity.x.com',
-        :authorize_url => '/xidentity/resources/authorize',
-        :token_url     => '/xidentity/oauthtokenservice'
+        :site          => 'https://www.paypal.com',
+        :authorize_url => '/webapps/auth/protocol/openidconnect/v1/authorize',
+        :token_url     => '/webapps/auth/protocol/openidconnect/v1/tokenservice'
       }
 
       option :authorize_options, [:scope, :response_type]
@@ -34,7 +34,8 @@ module OmniAuth
           'language' =>  raw_info['language'],
           'dob' => raw_info['dob'],
           'timezone' => raw_info['timezone'],
-          'payerID' => raw_info['payerID']
+          'payerID' => raw_info['payerID'],
+          'raw_info' => raw_info
         }
       end
 
@@ -58,10 +59,11 @@ module OmniAuth
       private
         def load_identity
           access_token.options[:mode] = :query
-          access_token.options[:param_name] = :oauth_token
+          access_token.options[:param_name] = :access_token
           access_token.options[:grant_type] = :authorization_code
-          response = access_token.get('/xidentity/resources/profile/me')
-          identity = response.parsed['identity']
+          access_token.options[:schema] = :openid
+          response = access_token.get('/webapps/auth/protocol/openidconnect/v1/userinfo')
+          identity = response.parsed
           identity
         end
     end

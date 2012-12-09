@@ -3,7 +3,7 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = "profile"
+      DEFAULT_SCOPE = "openid profile"
       DEFAULT_RESPONSE_TYPE = "code"
 
       option :client_options, {
@@ -14,35 +14,30 @@ module OmniAuth
 
       option :authorize_options, [:scope, :response_type]
 
-      uid { raw_info['userId'] }
+      uid { @parsed_uid ||= (/\/(\w+)\z/.match raw_info['user_id'])[1] } #https://www.paypal.com/webapps/auth/identity/user/baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw => baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw
     
       info do
-        {
-          'name' => raw_info['fullName'],
-          'first_name' => raw_info['firstName'],
-          'last_name' => raw_info['lastName'],
-          'email' => email(raw_info),
-          'phone' => raw_info['telephoneNumber']
-        }
+        prune!({
+                   'name' => raw_info['name'],
+                   'email' => raw_info['email'],
+                   'first_name' => raw_info['given_name'],
+                   'last_name' => raw_info['family_name'],
+                   'location' => (raw_info['address'] || {})['locality'],
+                   'phone' => raw_info['phone_number']
+               })
       end
 
       extra do
-        {
-          'emails' => raw_info['emails'],
-          'addresses' => raw_info['addresses'],
-          'status' => raw_info['status'],
-          'language' =>  raw_info['language'],
-          'dob' => raw_info['dob'],
-          'timezone' => raw_info['timezone'],
-          'payerID' => raw_info['payerID'],
-          'raw_info' => raw_info
-        }
-      end
-
-      def email(raw_info)
-        if raw_info['emails'] && !raw_info['emails'].empty?
-          raw_info['emails'][0]
-        end
+        prune!({
+                   'account_type' => raw_info['account_type'],
+                   'user_id' => raw_info['user_id'],
+                   'address' => raw_info['address'],
+                   'verified_account' => raw_info['verified_account'],
+                   'language' => raw_info['language'],
+                   'zoneinfo' => raw_info['zoneinfo'],
+                   'locale' => raw_info['locale'],
+                   'account_creation_date' => raw_info['account_creation_date']
+               })
       end
 
       def raw_info
@@ -61,11 +56,16 @@ module OmniAuth
           access_token.options[:mode] = :query
           access_token.options[:param_name] = :access_token
           access_token.options[:grant_type] = :authorization_code
-          access_token.options[:schema] = :openid
-          response = access_token.get('/webapps/auth/protocol/openidconnect/v1/userinfo')
-          identity = response.parsed
-          identity
+          access_token.get('/webapps/auth/protocol/openidconnect/v1/userinfo', { :params => { :schema => 'openid'}}).parsed || {}
         end
+
+        def prune!(hash)
+          hash.delete_if do |_, value|
+            prune!(value) if value.is_a?(Hash)
+            value.nil? || (value.respond_to?(:empty?) && value.empty?)
+          end
+        end
+
     end
   end
 end

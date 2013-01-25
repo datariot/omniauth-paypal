@@ -13,6 +13,7 @@ module OmniAuth
       }
 
       option :authorize_options, [:scope, :response_type]
+      option :provider_ignores_state, true
 
       uid { raw_info['userId'] }
     

@@ -4,6 +4,26 @@
 
 This gem contains the PayPal Access strategy for OmniAuth.
 
+## Installing
+
+Add to your `Gemfile`:
+
+```ruby
+gem 'omniauth-paypal', :git => "git://github.com/datariot/omniauth-paypal.git"
+```
+
+Then `bundle install`.
+
+## Usage
+
+Here's a quick example, adding the middleware to a Rails app in `config/initializers/omniauth.rb`.
+
+```ruby
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :paypal, ENV['APP_ID'], ENV['APP_TOKEN'], {:scope => "https://identity.x.com/xidentity/resources/profile/me"}
+end
+```
+
 ## info
 
 PayPal Access information https://www.x.com/developers/x.commerce/products/paypal-access

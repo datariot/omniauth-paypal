@@ -56,7 +56,6 @@ module OmniAuth
           access_token.options[:grant_type] = :authorization_code
           response = access_token.get('/webapps/auth/protocol/openidconnect/v1/userinfo?schema=openid')
           response.parsed
-          throw response.parsed
         end
     end
   end

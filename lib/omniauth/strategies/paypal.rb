@@ -3,46 +3,37 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = "https://identity.x.com/xidentity/resources/profile/me"
       DEFAULT_RESPONSE_TYPE = "code"
 
       option :client_options, {
-        :site          => 'https://identity.x.com',
-        :authorize_url => '/xidentity/resources/authorize',
-        :token_url     => '/xidentity/oauthtokenservice'
+        :site          => 'https://www.paypal.com',
+        :authorize_url => '/webapps/auth/protocol/openidconnect/v1/authorize',
+        :token_url     => '/webapps/auth/protocol/openidconnect/v1/tokenservice'
       }
 
-      option :authorize_options, [:scope, :response_type]
+      option :authorize_options, [:scope, :response_type, :schema]
       option :provider_ignores_state, true
+      option :scope, 'profile email'
 
-      uid { raw_info['userId'] }
+      uid { raw_info['user_id'].split('/').last }
     
       info do
         {
-          'name' => raw_info['fullName'],
-          'first_name' => raw_info['firstName'],
-          'last_name' => raw_info['lastName'],
-          'email' => email(raw_info),
-          'phone' => raw_info['telephoneNumber']
+          'name' => raw_info['name'],
+          'first_name' => raw_info['given_name'],
+          'last_name' => raw_info['family_name'],
+          'email' => raw_info['email'],
+          'phone' => raw_info['phone_number'],
+          'location' => "#{raw_info['locality']}, #{raw_info['country']}",
+          
         }
       end
 
       extra do
-        {
-          'emails' => raw_info['emails'],
-          'addresses' => raw_info['addresses'],
-          'status' => raw_info['status'],
-          'language' =>  raw_info['language'],
-          'dob' => raw_info['dob'],
-          'timezone' => raw_info['timezone'],
-          'payerID' => raw_info['payerID']
+        raw_info.merge {
+          'verified_account' => raw_info['verified_account'] == 'true',
+          'account_type' => raw_info['account_type'].downcase.to_sym
         }
-      end
-
-      def email(raw_info)
-        if raw_info['emails'] && !raw_info['emails'].empty?
-          raw_info['emails'][0]
-        end
       end
 
       def raw_info
@@ -51,19 +42,21 @@ module OmniAuth
 
       def authorize_params
         super.tap do |params|
-          params[:scope] ||= DEFAULT_SCOPE
+          params[:schema] = 'openid'
+          params[:scope] = "openid #{params[:scope]}".rstrip
           params[:response_type] ||= DEFAULT_RESPONSE_TYPE
         end
       end
 
       private
+
         def load_identity
           access_token.options[:mode] = :query
-          access_token.options[:param_name] = :oauth_token
+          access_token.options[:param_name] = :access_token
           access_token.options[:grant_type] = :authorization_code
-          response = access_token.get('/xidentity/resources/profile/me')
-          identity = response.parsed['identity']
-          identity
+          response = access_token.get('/webapps/auth/protocol/openidconnect/v1/userinfo?schema=openid')
+          response.parsed
+          throw response.parsed
         end
     end
   end

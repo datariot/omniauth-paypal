@@ -20,9 +20,13 @@ Here's a quick example, adding the middleware to a Rails app in `config/initiali
 
 ```ruby
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :paypal, ENV['APP_ID'], ENV['APP_TOKEN'], {:scope => "https://identity.x.com/xidentity/resources/profile/me"}
+  provider :paypal, ENV['APP_ID'], ENV['APP_TOKEN'],
+    { :scope => "profile email address phone https://uri.paypal.com/services/paypalattributes"}
 end
 ```
+
+To see what each scope gives you access to see here:
+https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-openid-connect-integration-paypal
 
 ## info
 
@@ -35,14 +39,19 @@ The info returned currently is:
     info['first_name']
     info['last_name]
     info['phone']
+    info['location']
 
-    extra['emails']
-    extra['addresses']
+    extra['verified_account'] # true / false
+    extra['family_name']
     extra['language']
-    extra['status']
-    extra['dob']
-    extra['timezone']
-    extra['payerID]'
+    extra['phone_number']
+    extra['locale']
+    extra['zoneinfo']
+    extra['name']
+    extra['email']
+    extra['account_type'] # :premier, :business or :personal
+    extra['given_name']
+    extra['user_id']
 
 To register your application for PayPal identity: https://www.x.com/products/access/applications/submit
 

@@ -25,15 +25,14 @@ module OmniAuth
           'email' => raw_info['email'],
           'phone' => raw_info['phone_number'],
           'location' => "#{raw_info['locality']}, #{raw_info['country']}",
-          
         }
       end
 
       extra do
-        raw_info.merge {
-          'verified_account' => raw_info['verified_account'] == 'true',
+        raw_info.merge({
+          'verified_account' => (raw_info['verified_account'] == 'true'),
           'account_type' => raw_info['account_type'].downcase.to_sym
-        }
+        })
       end
 
       def raw_info

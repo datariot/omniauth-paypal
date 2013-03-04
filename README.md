@@ -1,5 +1,8 @@
 # OmniAuth PayPal
 
+This is a fork from [surferdwa/omniauth-paypal](https://github.com/surferdwa/omniauth-paypal) which uses [OpenID Connect](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-openid-connect-integration-paypal) instead of [OAuth](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-integration-paypal-access-getting-full).
+Using Paypal Access through OpenID Connect allows getting different set of attributes, including "Account Type", "Account Verified" and some [more](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-openid-connect-integration-paypal##attributes).
+
 **Note:** This gem is designed to work with OmniAuth 1.0 library.
 
 This gem contains the PayPal Access strategy for OmniAuth.
@@ -28,23 +31,74 @@ end
 
 PayPal Access information https://www.x.com/developers/x.commerce/products/paypal-access
 
-The info returned currently is:
+The maximum info returned currently is:
 
     info['name']
     info['email']
     info['first_name']
     info['last_name]
+    info['location']
     info['phone']
 
-    extra['emails']
-    extra['addresses']
+    extra['account_type']
+    extra['user_id']
+    extra['address']['postal_code']
+    extra['address']['locality']
+    extra['address']['country']
+    extra['address']['street_address']
+    extra['verified_account']
     extra['language']
-    extra['status']
-    extra['dob']
-    extra['timezone']
-    extra['payerID]'
+    extra['zoneinfo']
+    extra['locale']
+    extra['account_creation_date']
 
-To register your application for PayPal identity: https://www.x.com/products/access/applications/submit
+PayPal docs claim that day of birth also may be returned, but I was not able to find this param name, so it's not currently included.
+
+Actual set of attributes depends on these possible scopes:
+
+    openid
+    profile
+    email
+    address
+    phone
+    https://uri.paypal.com/services/paypalattributes
+(the last is scope name, not a link)
+
+For details see [this section](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-openid-connect-integration-paypal##attributes).
+
+To register your application for PayPal Access follow these instructions: https://www.x.com/developers/paypal/how-to-guides/how-register-application-paypal-access
+
+
+## Example of result auth hash
+With all scopes requested.
+
+    provider: paypal
+    uid: bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
+    info:
+      name: John Smith
+      email: example@example.com
+      first_name: John
+      last_name: Smith
+      location: Moscow
+      phone: "71234567890"
+    credentials:
+      token: <token>
+      refresh_token: <refresh token>
+      expires_at: 1355082790
+      expires: true
+    extra:
+      account_type: PERSONAL
+      user_id: https://www.paypal.com/webapps/auth/identity/user/bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
+      address:
+        postal_code: "123456"
+        locality: Moscow
+        country: RU
+        street_address: Red square, 1
+      verified_account: "true"
+      language: en_US
+      zoneinfo: America/Los_Angeles
+      locale: en_US
+      account_creation_date: "2008-04-21"
 
 ## License
 

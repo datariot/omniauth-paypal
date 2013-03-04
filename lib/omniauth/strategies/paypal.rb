@@ -9,7 +9,8 @@ module OmniAuth
       option :client_options, {
         :site          => 'https://www.paypal.com',
         :authorize_url => '/webapps/auth/protocol/openidconnect/v1/authorize',
-        :token_url     => '/webapps/auth/protocol/openidconnect/v1/tokenservice'
+        :token_url     => '/webapps/auth/protocol/openidconnect/v1/tokenservice',
+        :user_info     => '/webapps/auth/protocol/openidconnect/v1/userinfo'
       }
 
       option :authorize_options, [:scope, :response_type]
@@ -57,7 +58,7 @@ module OmniAuth
           access_token.options[:mode] = :query
           access_token.options[:param_name] = :access_token
           access_token.options[:grant_type] = :authorization_code
-          access_token.get('/webapps/auth/protocol/openidconnect/v1/userinfo', { :params => { :schema => 'openid'}}).parsed || {}
+          access_token.get(options.client_options.user_info, { :params => { :schema => 'openid'}}).parsed || {}
         end
 
         def prune!(hash)

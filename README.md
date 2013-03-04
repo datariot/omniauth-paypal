@@ -1,11 +1,8 @@
 # OmniAuth PayPal
 
-This is a fork from [surferdwa/omniauth-paypal](https://github.com/surferdwa/omniauth-paypal) which uses [OpenID Connect](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-openid-connect-integration-paypal) instead of [OAuth](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-integration-paypal-access-getting-full).
-Using Paypal Access through OpenID Connect allows getting different set of attributes, including "Account Type", "Account Verified" and some [more](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-openid-connect-integration-paypal##attributes).
-
 **Note:** This gem is designed to work with OmniAuth 1.0 library.
 
-This gem contains the PayPal Access strategy for OmniAuth.
+This gem contains the PayPal Access using OpenID strategy for OmniAuth.
 
 ## Installing
 

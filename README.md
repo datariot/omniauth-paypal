@@ -20,7 +20,7 @@ Here's a quick example, adding the middleware to a Rails app in `config/initiali
 
 ```ruby
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :paypal, ENV['APP_ID'], ENV['APP_TOKEN'], {:scope => "https://identity.x.com/xidentity/resources/profile/me"}
+  provider :paypal, ENV['APP_ID'], ENV['APP_TOKEN']
 end
 ```
 

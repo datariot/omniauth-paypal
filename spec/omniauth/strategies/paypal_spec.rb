@@ -10,15 +10,15 @@ describe OmniAuth::Strategies::PayPal do
 
   describe '#client' do
     it 'has correct PayPal site' do
-      subject.client.site.should eq('https://identity.x.com')
+      subject.client.site.should eq('https://www.paypal.com')
     end
 
     it 'has correct authorize url' do
-      subject.client.options[:authorize_url].should eq('/xidentity/resources/authorize')
+      subject.client.options[:authorize_url].should eq('/webapps/auth/protocol/openidconnect/v1/authorize')
     end
 
     it 'has correct token url' do
-      subject.client.options[:token_url].should eq('/xidentity/oauthtokenservice')
+      subject.client.options[:token_url].should eq('/webapps/auth/protocol/openidconnect/v1/tokenservice')
     end
   end
 
@@ -28,11 +28,4 @@ describe OmniAuth::Strategies::PayPal do
     end
   end
 
-  # These are setup during the request_phase
-  # At init they are blank
-  describe '#authorize_params' do
-    it "has no authorize params at init" do
-      subject.authorize_params.should be_empty
-    end
-  end
 end

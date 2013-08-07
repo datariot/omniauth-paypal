@@ -13,6 +13,12 @@ describe OmniAuth::Strategies::PayPal do
       subject.client.site.should eq('https://www.paypal.com')
     end
 
+    it 'has correct PayPal sandbox site' do
+      @options = { :sandbox => true }
+      subject.setup_phase
+      subject.client.site.should eq('https://www.sandbox.paypal.com')
+    end
+
     it 'has correct authorize url' do
       subject.client.options[:authorize_url].should eq('/webapps/auth/protocol/openidconnect/v1/authorize')
     end

@@ -5,18 +5,21 @@ module OmniAuth
     class PayPal < OmniAuth::Strategies::OAuth2
       DEFAULT_SCOPE = "openid profile"
       DEFAULT_RESPONSE_TYPE = "code"
+      SANDBOX_SITE = "https://www.sandbox.paypal.com"
 
       option :client_options, {
         :site          => 'https://www.paypal.com',
         :authorize_url => '/webapps/auth/protocol/openidconnect/v1/authorize',
         :token_url     => '/webapps/auth/protocol/openidconnect/v1/tokenservice',
+        :setup         => true
       }
 
       option :authorize_options, [:scope, :response_type]
       option :provider_ignores_state, true
+      option :sandbox, false
 
       uid { @parsed_uid ||= (/\/([^\/]+)\z/.match raw_info['user_id'])[1] } #https://www.paypal.com/webapps/auth/identity/user/baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw => baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw
-    
+
       info do
         prune!({
                    'name' => raw_info['name'],
@@ -39,6 +42,10 @@ module OmniAuth
                    'locale' => raw_info['locale'],
                    'account_creation_date' => raw_info['account_creation_date']
                })
+      end
+
+      def setup_phase
+        options.client_options[:site] = SANDBOX_SITE if options.sandbox
       end
 
       def raw_info

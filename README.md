@@ -9,7 +9,7 @@ This gem contains the PayPal Access using OpenID strategy for OmniAuth.
 Add to your `Gemfile`:
 
 ```ruby
-gem 'omniauth-paypal', :git => "git://github.com/datariot/omniauth-paypal.git"
+gem "omniauth-paypal"
 ```
 
 Then `bundle install`.

@@ -96,6 +96,10 @@ With all scopes requested.
       zoneinfo: America/Los_Angeles
       locale: en_US
       account_creation_date: "2008-04-21"
+      
+## Contributing
+
+PayPal Identity has been in flux since I started this project and anything that helps keep this gem up to date and tested is greatly apprecitated. Thanks for your help!
 
 ## License
 

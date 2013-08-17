@@ -3,7 +3,7 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = "openid profile"
+      DEFAULT_SCOPE = "profile"
       DEFAULT_RESPONSE_TYPE = "code"
 
       option :client_options, {

@@ -5,12 +5,13 @@ module OmniAuth
     class PayPal < OmniAuth::Strategies::OAuth2
       DEFAULT_SCOPE = "profile"
       DEFAULT_RESPONSE_TYPE = "code"
-      SANDBOX_SITE = "https://www.sandbox.paypal.com"
+      SANDBOX_SITE = "https://api.sandbox.paypal.com"
+      SANDBOX_AUTHORIZE_URL = 'https://www.sandbox.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize'
 
       option :client_options, {
-        :site          => 'https://www.paypal.com',
-        :authorize_url => '/webapps/auth/protocol/openidconnect/v1/authorize',
-        :token_url     => '/webapps/auth/protocol/openidconnect/v1/tokenservice',
+        :site          => 'https://api.paypal.com',
+        :authorize_url => 'https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize',
+        :token_url     => '/v1/identity/openidconnect/tokenservice',
         :setup         => true
       }
 
@@ -26,6 +27,8 @@ module OmniAuth
                    'email' => raw_info['email'],
                    'first_name' => raw_info['given_name'],
                    'last_name' => raw_info['family_name'],
+                   'given_name' => raw_info['given_name'],
+                   'family_name' => raw_info['family_name'],
                    'location' => (raw_info['address'] || {})['locality'],
                    'phone' => raw_info['phone_number']
                })
@@ -36,16 +39,21 @@ module OmniAuth
                    'account_type' => raw_info['account_type'],
                    'user_id' => raw_info['user_id'],
                    'address' => raw_info['address'],
-                   'verified_account' => raw_info['verified_account'],
+                   'verified_account' => (raw_info['verified_account'] == true),
                    'language' => raw_info['language'],
                    'zoneinfo' => raw_info['zoneinfo'],
                    'locale' => raw_info['locale'],
-                   'account_creation_date' => raw_info['account_creation_date']
+                   'account_creation_date' => raw_info['account_creation_date'],
+                   'age_range' => raw_info['age_range'],
+                   'birthday' => raw_info['birthday']
                })
       end
 
       def setup_phase
-        options.client_options[:site] = SANDBOX_SITE if options.sandbox
+        if options.sandbox
+          options.client_options[:site] = SANDBOX_SITE
+          options.client_options[:authorize_url] = SANDBOX_AUTHORIZE_URL
+        end
       end
 
       def raw_info
@@ -64,7 +72,7 @@ module OmniAuth
           access_token.options[:mode] = :query
           access_token.options[:param_name] = :access_token
           access_token.options[:grant_type] = :authorization_code
-          access_token.get('/webapps/auth/protocol/openidconnect/v1/userinfo', { :params => { :schema => 'openid'}}).parsed || {}
+          access_token.get('/v1/identity/openidconnect/userinfo', { :params => { :schema => 'openid'}}).parsed || {}
         end
 
         def prune!(hash)

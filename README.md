@@ -2,7 +2,7 @@
 
 **Note:** This gem is designed to work with OmniAuth 1.0 library.
 
-This gem contains the PayPal Access using OpenID strategy for OmniAuth.
+This gem contains the Log In With PayPal strategy for OmniAuth.
 
 ## Installing
 
@@ -20,86 +20,104 @@ Here's a quick example, adding the middleware to a Rails app in `config/initiali
 
 ```ruby
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :paypal, ENV['APP_ID'], ENV['APP_TOKEN']
+  provider :paypal, ENV['APP_ID'], ENV['APP_TOKEN'], sandbox: true, scope: "openid profile email"
 end
 ```
 
-## info
+## Attributes and Scopes
 
-PayPal Access information https://www.x.com/developers/x.commerce/products/paypal-access
+Log In With PayPal information can be found on https://developer.paypal.com/webapps/developer/docs/integration/direct/log-in-with-paypal/
 
-The maximum info returned currently is:
+The possible attributes to be returned at the moment are:
 
-    info['name']
-    info['email']
-    info['first_name']
-    info['last_name]
-    info['location']
-    info['phone']
+```ruby
+info['name']
+info['email']
+info['first_name'] # also available as given_name
+info['last_name'] # also available as family_name
+info['location']
+info['name']
+info['phone']
 
-    extra['account_type']
-    extra['user_id']
-    extra['address']['postal_code']
-    extra['address']['locality']
-    extra['address']['country']
-    extra['address']['street_address']
-    extra['verified_account']
-    extra['language']
-    extra['zoneinfo']
-    extra['locale']
-    extra['account_creation_date']
+extra['account_creation_date']
+extra['account_type']
+extra['address']['country']
+extra['address']['locality']
+extra['address']['postal_code']
+extra['address']['region']
+extra['address']['street_address']
+extra['language']
+extra['locale']
+extra['verified_account']
+extra['zoneinfo']
+extra['age_range']
+extra['birthday']
+```
 
-PayPal docs claim that day of birth also may be returned, but I was not able to find this param name, so it's not currently included.
+The actual set of attributes returned depends on the scopes set. The currently available scopes are:
 
-Actual set of attributes depends on these possible scopes:
+```
+openid
+profile
+email
+address
+phone
+https://uri.paypal.com/services/paypalattributes
+https://uri.paypal.com/services/expresscheckout
+```
 
-    openid
-    profile
-    email
-    address
-    phone
-    https://uri.paypal.com/services/paypalattributes
-(the last is scope name, not a link)
+(those last 2 are scope names, not links)
 
-For details see [this section](https://www.x.com/developers/paypal/documentation-tools/quick-start-guides/oauth-openid-connect-integration-paypal##attributes).
+For more details see the PayPal [list of attributes](https://developer.paypal.com/webapps/developer/docs/integration/direct/log-in-with-paypal/detailed/#attributes).
 
-To register your application for PayPal Access follow these instructions: https://www.x.com/developers/paypal/how-to-guides/how-register-application-paypal-access
+## Registering for an API key
 
+To register your application for Log In With PayPal head over to the [PayPal Developer portal](https://developer.paypal.com/), log in and register for an application. Make sure to match your scope when registering your app to the scope provided when initializing Omniauth.
+
+[A full tutorial is available](http://cristianobetta.com/blog/2013/09/27/integrating-login-with-paypal-into-rails/) on how to use Omniauth, Login With PayPal, and the PayPal Developer portal.
 
 ## Example of result auth hash
 With all scopes requested.
 
-    provider: paypal
-    uid: bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
-    info:
-      name: John Smith
-      email: example@example.com
-      first_name: John
-      last_name: Smith
-      location: Moscow
-      phone: "71234567890"
-    credentials:
-      token: <token>
-      refresh_token: <refresh token>
-      expires_at: 1355082790
-      expires: true
-    extra:
-      account_type: PERSONAL
-      user_id: https://www.paypal.com/webapps/auth/identity/user/bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
-      address:
-        postal_code: "123456"
-        locality: Moscow
-        country: RU
-        street_address: Red square, 1
-      verified_account: "true"
-      language: en_US
-      zoneinfo: America/Los_Angeles
-      locale: en_US
-      account_creation_date: "2008-04-21"
-      
+```yaml
+provider: paypal
+uid: bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
+info:
+  name: John Smith
+  email: example@example.com
+  first_name: John
+  last_name: Smith
+  given_name: John
+  family_name: Smith
+  location: Moscow
+  name: John Smith
+  phone: "71234567890"
+credentials:
+  token: <token>
+  refresh_token: <refresh token>
+  expires_at: 1355082790
+  expires: true
+extra:
+  account_creation_date: "2008-04-21"
+  account_type: PERSONAL
+  user_id: https://www.paypal.com/webapps/auth/identity/user/bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
+  address:
+    country: US
+    locality: San Jose
+    postal_code: "95131"
+    region: CA
+    street_address: 1 Main St
+  language: en_US
+  locale: en_US
+  verified_account: true
+  zoneinfo: America/Los_Angeles
+  age_range: 31-35
+  birthday: "1982-01-01"
+```
+
 ## Contributing
 
-PayPal Identity has been in flux since I started this project and anything that helps keep this gem up to date and tested is greatly apprecitated. Thanks for your help!
+Log In With PayPal has been in flux since I started this project and anything that helps keep this gem up to date and tested is greatly apprecitated. Thanks for your help!
 
 ## License
 

@@ -9,7 +9,7 @@ GIT
 PATH
   remote: .
   specs:
-    omniauth-paypal (1.0)
+    omniauth-paypal (1.1)
       omniauth-oauth2 (~> 1.1.0)
 
 GEM

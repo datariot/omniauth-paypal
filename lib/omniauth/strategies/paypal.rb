@@ -39,7 +39,7 @@ module OmniAuth
                    'account_type' => raw_info['account_type'],
                    'user_id' => raw_info['user_id'],
                    'address' => raw_info['address'],
-                   'verified_account' => (raw_info['verified_account'] == true),
+                   'verified_account' => (raw_info['verified_account'] == 'true'),
                    'language' => raw_info['language'],
                    'zoneinfo' => raw_info['zoneinfo'],
                    'locale' => raw_info['locale'],

@@ -32,6 +32,13 @@ describe OmniAuth::Strategies::PayPal do
     it 'has correct token url' do
       subject.client.options[:token_url].should eq('/v1/identity/openidconnect/tokenservice')
     end
+
+    it 'runs the setup block if passed one' do
+      counter = ''
+      @options = { :setup => Proc.new { |env| counter = 'ok' } }
+      subject.setup_phase
+      counter.should eq "ok"
+    end
   end
 
   describe '#callback_path' do

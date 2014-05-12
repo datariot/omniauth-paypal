@@ -54,6 +54,7 @@ module OmniAuth
           options.client_options[:site] = SANDBOX_SITE
           options.client_options[:authorize_url] = SANDBOX_AUTHORIZE_URL
         end
+        super
       end
 
       def raw_info

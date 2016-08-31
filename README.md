@@ -28,32 +28,6 @@ end
 
 Log In With PayPal information can be found on https://developer.paypal.com/webapps/developer/docs/integration/direct/log-in-with-paypal/
 
-The possible attributes to be returned at the moment are:
-
-```ruby
-info['name']
-info['email']
-info['first_name'] # also available as given_name
-info['last_name'] # also available as family_name
-info['location']
-info['name']
-info['phone']
-
-extra['account_creation_date']
-extra['account_type']
-extra['address']['country']
-extra['address']['locality']
-extra['address']['postal_code']
-extra['address']['region']
-extra['address']['street_address']
-extra['language']
-extra['locale']
-extra['verified_account']
-extra['zoneinfo']
-extra['age_range']
-extra['birthday']
-```
-
 The actual set of attributes returned depends on the scopes set. The currently available scopes are:
 
 ```
@@ -68,7 +42,7 @@ https://uri.paypal.com/services/expresscheckout
 
 (those last 2 are scope names, not links)
 
-For more details see the PayPal [list of attributes](https://developer.paypal.com/webapps/developer/docs/integration/direct/log-in-with-paypal/detailed/#attributes).
+For more details see the PayPal [list of attributes](https://developer.paypal.com/docs/integration/direct/identity/attributes/).
 
 ## Registering for an API key
 
@@ -76,43 +50,68 @@ To register your application for Log In With PayPal head over to the [PayPal Dev
 
 [A full tutorial is available](http://cristianobetta.com/blog/2013/09/27/integrating-login-with-paypal-into-rails/) on how to use Omniauth, Login With PayPal, and the PayPal Developer portal.
 
+If the Paypal Sandbox does not like connecting with `localhost` for authentication during development, tools like [ngrok](https://ngrok.com) should be quite useful. For example, if using Rails, start the server with:
+
+```
+ngrok http 3000
+```
+
+and then set the return URL for the sandbox login app to the exposed `ngrok` server:
+
+```
+http://fe04daed.ngrok.io/users/auth/paypal/callback
+```
+
 ## Example of result auth hash
+
 With all scopes requested.
 
-```yaml
-provider: paypal
-uid: bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
-info:
-  name: John Smith
-  email: example@example.com
-  first_name: John
-  last_name: Smith
-  given_name: John
-  family_name: Smith
-  location: Moscow
-  name: John Smith
-  phone: "71234567890"
-credentials:
-  token: <token>
-  refresh_token: <refresh token>
-  expires_at: 1355082790
-  expires: true
-extra:
-  account_creation_date: "2008-04-21"
-  account_type: PERSONAL
-  user_id: https://www.paypal.com/webapps/auth/identity/user/bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
-  address:
-    country: US
-    locality: San Jose
-    postal_code: "95131"
-    region: CA
-    street_address: 1 Main St
-  language: en_US
-  locale: en_US
-  verified_account: true
-  zoneinfo: America/Los_Angeles
-  age_range: 31-35
-  birthday: "1982-01-01"
+```ruby
+{
+  "provider" => "paypal",
+  "uid" => "K43VMDJ6KaRJgMVUFRGT3hqpdnhg1tDYLmlPgxl1HRE",
+  "info" => {
+    "name" => "John Smith",
+    "email" => "john.smith@test.com",
+    "first_name" => "John",
+    "last_name" => "Smith",
+    "location" => "Wolverhampton, West Midlands",
+    "phone" => "0356739226"
+  },
+  "credentials" => {
+    "token" => "A103.rHsfH5P3to...",
+    "refresh_token"=> "R103.DYHqCcnXAS...",
+    "expires_at" => 1472691158,
+    "expires" => true
+  },
+  "extra" => {
+    "raw_info" => {
+      "payer_id" => "6ZGXTKGQ3L35N",
+      "family_name" => "Smith",
+      "verified" => "true",
+      "name" => "John Smith",
+      "account_type" => "PERSONAL",
+      "given_name" => "John",
+      "user_id" => "https://www.paypal.com/webapps/auth/identity/user/K43VMDJ6KaRJgMVUFRGT3hqpdnhg1tDYLmlPgxl1HRE",
+      "address" => {
+        "postal_code" => "W12 4LQ",
+        "locality" => "Wolverhampton",
+        "region" => "West Midlands",
+        "country" => "GB",
+        "street_address" => "1 Main Terrace"
+      },
+      "verified_account" => "true",
+      "language" => "en_GB",
+      "zoneinfo" => "America/Los_Angeles",
+      "locale" => "en_GB",
+      "phone_number" => "0356739226",
+      "account_creation_date" => "2016-08-30",
+      "email" => "john.smith@test.com",
+      "age_range" => "36-40",
+      "birthday" => "1975-10-10"
+    }
+  }
+}
 ```
 
 ## Contributing

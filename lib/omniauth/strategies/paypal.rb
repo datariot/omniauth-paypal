@@ -3,62 +3,62 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class PayPal < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = "openid profile"
+      DEFAULT_SCOPE         = "openid profile"
       DEFAULT_RESPONSE_TYPE = "code"
-      SANDBOX_SITE = "https://api.sandbox.paypal.com"
+      SANDBOX_SITE          = "https://api.sandbox.paypal.com"
       SANDBOX_AUTHORIZE_URL = 'https://www.sandbox.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize'
 
       option :client_options, {
-        :site          => 'https://api.paypal.com',
-        :authorize_url => 'https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize',
-        :token_url     => '/v1/identity/openidconnect/tokenservice',
-        :setup         => true
+        site:          'https://api.paypal.com',
+        authorize_url: 'https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize',
+        token_url:     '/v1/identity/openidconnect/tokenservice',
       }
 
       option :authorize_options, [:scope, :response_type]
       option :provider_ignores_state, true
       option :sandbox, false
 
-      uid { @parsed_uid ||= (/\/([^\/]+)\z/.match raw_info['user_id'])[1] } #https://www.paypal.com/webapps/auth/identity/user/baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw => baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw
+      # https://www.paypal.com/webapps/auth/identity/user/baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw => baCNqjGvIxzlbvDCSsfhN3IrQDtQtsVr79AwAjMxekw
+      uid { raw_info['user_id'].scan(Regexp.new('identity/user/([^/]+)')).flatten.first || raw_info['user_id'] }
 
       info do
-        prune!({
-                   'name' => raw_info['name'],
-                   'email' => raw_info['email'],
-                   'first_name' => raw_info['given_name'],
-                   'last_name' => raw_info['family_name'],
-                   'given_name' => raw_info['given_name'],
-                   'family_name' => raw_info['family_name'],
-                   'location' => (raw_info['address'] || {})['locality'],
-                   'phone' => raw_info['phone_number']
-               })
+        prune!(
+          name:       raw_info['name'],
+          email:      raw_info['email'],
+          first_name: raw_info['given_name'],
+          last_name:  raw_info['family_name'],
+          location:   location,
+          phone:      raw_info['phone_number'],
+          image:      raw_info['picture'],
+          time_zone:  raw_info['zoneinfo'],
+          locale:     raw_info['locale'] || raw_info['language']
+        )
       end
 
       extra do
-        prune!({
-                   'account_type' => raw_info['account_type'],
-                   'user_id' => raw_info['user_id'],
-                   'address' => raw_info['address'],
-                   'verified_account' => (raw_info['verified_account'] == 'true'),
-                   'language' => raw_info['language'],
-                   'zoneinfo' => raw_info['zoneinfo'],
-                   'locale' => raw_info['locale'],
-                   'account_creation_date' => raw_info['account_creation_date'],
-                   'age_range' => raw_info['age_range'],
-                   'birthday' => raw_info['birthday']
-               })
+        prune!(raw_info: raw_info)
       end
 
       def setup_phase
         if options.sandbox
-          options.client_options[:site] = SANDBOX_SITE
-          options.client_options[:authorize_url] = SANDBOX_AUTHORIZE_URL
+          options.client_options.merge!(
+            site: SANDBOX_SITE,
+            authorize_url: SANDBOX_AUTHORIZE_URL
+          )
         end
+
         super
       end
 
+      def callback_url
+        options[:redirect_uri] || (full_host + script_name + callback_path)
+      end
+
       def raw_info
-        @raw_info ||= load_identity()
+        @raw_info ||= begin
+          access_token.options.merge!(mode: :query, param_name: :access_token, grant_type: :authorization_code)
+          access_token.get('/v1/identity/openidconnect/userinfo', { params: { schema: 'openid'}}).parsed || {}
+        end
       end
 
       def authorize_params
@@ -68,21 +68,36 @@ module OmniAuth
         end
       end
 
-      private
-        def load_identity
-          access_token.options[:mode] = :query
-          access_token.options[:param_name] = :access_token
-          access_token.options[:grant_type] = :authorization_code
-          access_token.get('/v1/identity/openidconnect/userinfo', { :params => { :schema => 'openid'}}).parsed || {}
+      def build_access_token
+        verifier     = request.params["code"]
+        redirect_uri = request.params['redirect_uri']
+
+        if request.xhr? && request.params['code']
+          redirect_uri ||= 'postmessage'
+        elsif !request.params['code'] || !request.params['redirect_uri']
+          redirect_uri = callback_url
         end
 
-        def prune!(hash)
-          hash.delete_if do |_, value|
-            prune!(value) if value.is_a?(Hash)
-            value.nil? || (value.respond_to?(:empty?) && value.empty?)
-          end
-        end
+        client.auth_code.get_token(
+          verifier,
+          { redirect_uri: redirect_uri }.merge(token_params.to_hash(symbolize_keys: true)),
+          deep_symbolize(options.auth_token_params || {})
+        )
+      end
 
+    private
+
+      def location
+        address = raw_info.fetch('address', {})
+        address.values_at('locality', 'region', 'country').compact.join(', ')
+      end
+
+      def prune!(hash)
+        hash.delete_if do |_, value|
+          prune!(value) if value.is_a?(Hash)
+          value.nil? || (value.respond_to?(:empty?) && value.empty?)
+        end
+      end
     end
   end
 end

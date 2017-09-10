@@ -2,7 +2,7 @@
 
 **Note:** This gem is designed to work with OmniAuth 1.0 library.
 
-This gem contains the Log In With PayPal strategy for OmniAuth.
+This gem contains the Log In With PayPal OpenID strategy for OmniAuth.
 
 ## Installing
 
@@ -33,25 +33,25 @@ The possible attributes to be returned at the moment are:
 ```ruby
 info['name']
 info['email']
-info['first_name'] # also available as given_name
-info['last_name'] # also available as family_name
+info['first_name']
+info['last_name']
 info['location']
 info['name']
 info['phone']
 
-extra['account_creation_date']
-extra['account_type']
-extra['address']['country']
-extra['address']['locality']
-extra['address']['postal_code']
-extra['address']['region']
-extra['address']['street_address']
-extra['language']
-extra['locale']
-extra['verified_account']
-extra['zoneinfo']
-extra['age_range']
-extra['birthday']
+extra['raw_info']['account_creation_date']
+extra['raw_info']['account_type']
+extra['raw_info']['address']['country']
+extra['raw_info']['address']['locality']
+extra['raw_info']['address']['postal_code']
+extra['raw_info']['address']['region']
+extra['raw_info']['address']['street_address']
+extra['raw_info']['language']
+extra['raw_info']['locale']
+extra['raw_info']['verified_account']
+extra['raw_info']['zoneinfo']
+extra['raw_info']['age_range']
+extra['raw_info']['birthday']
 ```
 
 The actual set of attributes returned depends on the scopes set. The currently available scopes are:
@@ -87,8 +87,6 @@ info:
   email: example@example.com
   first_name: John
   last_name: Smith
-  given_name: John
-  family_name: Smith
   location: Moscow
   name: John Smith
   phone: "71234567890"
@@ -98,21 +96,22 @@ credentials:
   expires_at: 1355082790
   expires: true
 extra:
-  account_creation_date: "2008-04-21"
-  account_type: PERSONAL
-  user_id: https://www.paypal.com/webapps/auth/identity/user/bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
-  address:
-    country: US
-    locality: San Jose
-    postal_code: "95131"
-    region: CA
-    street_address: 1 Main St
-  language: en_US
-  locale: en_US
-  verified_account: true
-  zoneinfo: America/Los_Angeles
-  age_range: 31-35
-  birthday: "1982-01-01"
+  raw_info:
+    account_creation_date: "2008-04-21"
+    account_type: PERSONAL
+    user_id: https://www.paypal.com/webapps/auth/identity/user/bathjJwvdhKjgfgh8Jd745J7dh5Qkgflbnczd65dfnw
+    address:
+      country: US
+      locality: San Jose
+      postal_code: "95131"
+      region: CA
+      street_address: 1 Main St
+    language: en_US
+    locale: en_US
+    verified_account: true
+    zoneinfo: America/Los_Angeles
+    age_range: 31-35
+    birthday: "1982-01-01"
 ```
 
 ## Contributing

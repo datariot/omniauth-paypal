@@ -5,8 +5,8 @@ require 'omniauth/paypal/version'
 Gem::Specification.new do |s|
   s.name     = 'omniauth-paypal'
   s.version  = OmniAuth::PayPal::VERSION
-  s.authors  = ['David W. Allen']
-  s.email    = ['david@datariot.io']
+  s.authors  = ['David W. Allen', 'Joel Van Horn']
+  s.email    = ['david@datariot.io', 'joel@joelvanhorn.com']
   s.summary  = 'PayPal Identity strategy for OmniAuth'
   s.homepage = 'https://github.com/datariot/omniauth-paypal'
   s.license  = 'MIT'
